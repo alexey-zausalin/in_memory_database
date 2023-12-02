@@ -19,10 +19,7 @@ class InMemoryDatabase:
         :param value: The value to associate with the key.
         :return: None
         """
-        if self.transactions:
-            transaction = self.transactions[-1]
-            transaction.append((key, self.data.get(key, None)))
-
+        self._save_old_value_for_transaction(key)
         self.data[key] = value
 
         return None
@@ -33,10 +30,7 @@ class InMemoryDatabase:
         :param key: The key to delete.
         :return: None
         """
-        if self.transactions:
-            transaction = self.transactions[-1]
-            transaction.append((key, self.data.get(key, None)))
-
+        self._save_old_value_for_transaction(key)
         del self.data[key]
 
         return None
@@ -71,6 +65,11 @@ class InMemoryDatabase:
                 self.data[key] = old_value
 
         return None
+
+    def _save_old_value_for_transaction(self, key):
+        if self.transactions:
+            transaction = self.transactions[-1]
+            transaction.append((key, self.data.get(key, None)))
 
 
 if __name__ == '__main__':
