@@ -1,7 +1,8 @@
 class InMemoryDatabase:
     def __init__(self):
-
-    # Initialize the in-memory database
+        # Initialize the in-memory database
+        self.data = {}
+        self.transactions = []
 
     def get(self, key):
         """
@@ -9,6 +10,7 @@ class InMemoryDatabase:
         :param key: The key to retrieve.
         :return: The value associated with the key or None if the key does not exist.
         """
+        return self.data.get(key, None)
 
     def set(self, key, value):
         """
@@ -17,6 +19,13 @@ class InMemoryDatabase:
         :param value: The value to associate with the key.
         :return: None
         """
+        if self.transactions:
+            transaction = self.transactions[-1]
+            transaction.append((key, self.data.get(key, None)))
+
+        self.data[key] = value
+
+        return None
 
     def delete(self, key):
         """
@@ -24,24 +33,44 @@ class InMemoryDatabase:
         :param key: The key to delete.
         :return: None
         """
+        if self.transactions:
+            transaction = self.transactions[-1]
+            transaction.append((key, self.data.get(key, None)))
+
+        del self.data[key]
+
+        return None
 
     def start_transaction(self):
         """
         Start a new transaction. All operations within this transaction are isolated from others.
         :return: None
         """
+        self.transactions.append([])
+
+        return None
 
     def commit(self):
         """
         Commit all changes made within the current transaction to the database.
         :return: None
         """
+        self.transactions.pop()
+
+        return None
 
     def rollback(self):
         """
         Roll back all changes made within the current transaction and discard them.
         :return: None
         """
+        for (key, old_value) in reversed(self.transactions.pop()):
+            if old_value is None:
+                del self.data[key]
+            else:
+                self.data[key] = old_value
+
+        return None
 
 
 if __name__ == '__main__':
