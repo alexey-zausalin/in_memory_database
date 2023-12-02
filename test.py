@@ -14,7 +14,7 @@ class TestInMemoryDatabase(unittest.TestCase):
         db.start_transaction()
         db.set("key1", "value2")
         db.commit()
-        self.assertEqual(db.get("key"), "value2")
+        self.assertEqual("value2", db.get("key1"))
 
     def test_rollback(self):
         """
@@ -24,11 +24,11 @@ class TestInMemoryDatabase(unittest.TestCase):
         db.set("key1", "value1")
 
         db.start_transaction()
-        self.assertEqual(db.get("key1"), "value1")
+        self.assertEqual("value1", db.get("key1"))
         db.set("key1", "value2")
-        self.assertEqual(db.get("key1"), "value2")
+        self.assertEqual("value2", db.get("key1"))
         db.rollback()
-        self.assertEqual(db.get("key"), "value1")
+        self.assertEqual("value1", db.get("key1"))
 
     def test_nested_transactions(self):
         """
@@ -38,14 +38,14 @@ class TestInMemoryDatabase(unittest.TestCase):
         db.set("key1", "value1")
         db.start_transaction()
         db.set("key1", "value2")
-        self.assertEqual(db.get("key1"), "value2")
+        self.assertEqual("value2", db.get("key1"))
         db.start_transaction()
-        self.assertEqual(db.get("key1"), "value2")
+        self.assertEqual("value2", db.get("key1"))
         db.delete("key1")
         db.commit()
-        self.assertEqual(db.get("key"), None)
+        self.assertEqual(None, db.get("key1"))
         db.commit()
-        self.assertEqual(db.get("key"), None)
+        self.assertEqual(None, db.get("key1"))
 
     def test_nested_transactions_with_rollback(self):
         """
@@ -55,14 +55,14 @@ class TestInMemoryDatabase(unittest.TestCase):
         db.set("key1", "value1")
         db.start_transaction()
         db.set("key1", "value2")
-        self.assertEqual(db.get("key1"), "value2")
+        self.assertEqual("value2", db.get("key1"))
         db.start_transaction()
-        self.assertEqual(db.get("key1"), "value2")
+        self.assertEqual("value2", db.get("key1"))
         db.delete("key1")
         db.rollback()
-        self.assertEqual(db.get("key1"), "value2")
+        self.assertEqual("value2", db.get("key1"))
         db.commit()
-        self.assertEqual(db.get("key1"), "value2")
+        self.assertEqual("value2", db.get("key1"))
 
 
 if __name__ == '__main__':
