@@ -1,6 +1,6 @@
 import unittest
 
-class InMemoryDatabaseTest(unittest.TestCase):
+class TestInMemoryDatabase(unittest.TestCase):
 
     def test_pass(self):
         assert True
